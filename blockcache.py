@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import datetime
-
 import web3
 from web3 import Web3
 
@@ -13,7 +11,7 @@ class BlockCache :
         self.length = length # number of blocks to cache in memory
 
     def _get_block(self, name) :
-        blk = self.w3.eth._get_block(name)
+        blk = self.w3.eth.getBlock(name)
         self.blocks[blk.hash] = blk
         return blk
 
@@ -105,33 +103,29 @@ if __name__ == '__main__' :
     import time
     import sys
 
-    async def aio_main() :
-        w3 = Web3()
+    w3 = Web3()
 
-        if w3.eth.syncing :
-            sys.stderr.write('Connected, syncing...\n')
-            while w3.eth.syncing :
-                time.sleep(1)
-            sys.stderr.write('Synced!\n')
-        else :
-            sys.stderr.write('Connected.\n')
+    if w3.eth.syncing :
+        sys.stderr.write('Connected, syncing...\n')
+        while w3.eth.syncing :
+            time.sleep(1)
+        sys.stderr.write('Synced!\n')
+    else :
+        sys.stderr.write('Connected.\n')
 
-        blks = RecentBlocks(w3, 10)
-        blks.ensure_head()
-        print(blks.head.number)
+    blks = BlockCache(w3, length=10)
+    blks.ensureHead()
+    print(blks.head.number)
 
-        while True :
-            start = time.time()
+    while True :
+        start = time.time()
 
-            holes, pruned = blks.update()
-            if holes :
-                print('HOLES ' + str([(b.hash, b.number) for b in holes]))
-                print('PRUNED ' + str([(b.hash, b.number) for b in pruned]))
-                print(len(blks.canonical_chain()))
-                end = time.time()
-                print('%r seconds' % str(end - start))
+        holes, pruned = blks.update()
+        if holes :
+            print('HOLES ' + str([(b.hash, b.number) for b in holes]))
+            print('PRUNED ' + str([(b.hash, b.number) for b in pruned]))
+            print(len(blks.canonical_chain))
+            end = time.time()
+            print('%r seconds' % str(end - start))
 
-            await asyncio.sleep(1)
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(aio_main())
+        time.sleep(1)
