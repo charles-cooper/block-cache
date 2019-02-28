@@ -1,16 +1,3 @@
-### README
-This is a simple Python class based on web3.py to help keep track of the
-canonical Ethereum chain (and orphans) - which is a requirement for coding
-correct applications in the presence of reorgs.
-
-#### Install
-```
-pip install git+https://github.com/charles-cooper/block-cache.git
-```
-
-#### Example Usage
-[example.py](example.py):
-```python
 #!/usr/bin/env python
 from blockcache import BlockCache
 from web3 import Web3
@@ -43,4 +30,3 @@ while True :
         print('%r seconds' % str(end - start))
 
     time.sleep(1)
-```
