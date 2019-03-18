@@ -36,19 +36,21 @@ class BlockCache :
         rmed = self.prune()
         return holes, rmed
 
-    @property
-    def canonical_chain(self) :
+    def _canonical_chain(self) :
         # probably should call patch_holes -
         # not guaranteed that update has been called
         ret = []
         cur = self.head
         while cur :
-            ret.append(cur)
+            yield cur
             cur = self.blocks.get(cur.parentHash)
-        return ret
+
+    @property
+    def canonical_chain(self) :
+        return list(self._canonical_chain())
 
     def is_canonical(self, blk) :
-        return blk in self.canonical_chain()
+        return blk in self._canonical_chain()
 
     def is_prunable(self, blk) :
         return blk.number <= self.head.number - self.length
@@ -65,7 +67,6 @@ class BlockCache :
     # Returns hash of block if less than self.length blocks behind
     # head, and is also not in memory.
     # @pure
-    # TODO refactor to generator
     def _find_hole(self, start=None) :
         if start is None :
             cur = self.head

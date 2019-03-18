@@ -22,10 +22,13 @@ while True :
     start = time.time()
 
     holes, pruned = blks.update()
+
     if holes :
         print('HOLES ' + str([(b.hash, b.number) for b in holes]))
         print('PRUNED ' + str([(b.hash, b.number) for b in pruned]))
-        print(len(blks.canonical_chain))
+        print(len(list(blks.canonical_chain)))
+        #for x in pruned :
+        #    print(f'{x.hash} is canonical: {blks.is_canonical(x)}')
         end = time.time()
         print('%r seconds' % str(end - start))
 
