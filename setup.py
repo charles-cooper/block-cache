@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
         name='block-cache',
         license='MIT',
-        py_modules='blockcache',
+        py_modules=['blockcache'],
         install_requires=[
             'web3>=4.8.2',
         ],
