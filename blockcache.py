@@ -2,14 +2,18 @@ import web3
 from web3 import Web3
 
 class BlockCache :
-    def __init__(self, w3, length=100) :
+    def __init__(self, w3, length=100, full_transactions=False) :
         self.blocks = {}
         self.head = None
         self.w3 = w3
         self.length = length # number of blocks to cache in memory
+        # whether to call eth_getBlock with full transaction data or not
+        if not isinstance(full_transactions, bool) :
+            raise ValueError('full_transactions must be bool')
+        self.full_transactions = full_transactions
 
     def _get_block(self, name) :
-        blk = self.w3.eth.getBlock(name)
+        blk = self.w3.eth.getBlock(name, self.full_transactions)
         self.blocks[blk.hash] = blk
         return blk
 
